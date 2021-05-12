@@ -74,31 +74,47 @@ const menu = [
 ];
 
 const sectionCenter = document.querySelector('.section-center');
-const filterBtns = document.querySelectorAll('.filter-btn');
+const btnConatiner = document.querySelector(".btn-container");
 
 // load items
 window.addEventListener('DOMContentLoaded', () => {
   displayMenuItems(menu);
+  displayFilterBtns();
 });
 
-// filter items
-filterBtns.forEach((btn) => {
-  btn.addEventListener('click', (e) => {
-    const category = e.currentTarget.dataset.type;
-    const menuCategory = menu.filter((menuItem) => {
-      if (menuItem.category === category) {
-        return menuItem;
+const displayFilterBtns = () => {
+  const categories = menu.reduce((values, item) => {
+    if (!values.includes(item.category)) {
+      values.push(item.category);
+    }
+    return values;
+  },['all']);
+  const categoryBtn = categories.map((category) => {
+    return `<button class="filter-btn" type="button" data-type="${category}">${category}</button>`
+  }).join("");
+  btnConatiner.innerHTML = categoryBtn;
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  filterBtns.forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      const category = e.currentTarget.dataset.type;
+      const menuCategory = menu.filter((menuItem) => {
+        if (menuItem.category === category) {
+          return menuItem;
+        }
+      });
+      if (category === "all") {
+        return displayMenuItems(menu);
       }
+      else {
+        displayMenuItems(menuCategory);
+      }
+      console.log(menuCategory);
     });
-    if (category === "all") {
-      return displayMenuItems(menu);
-    }
-    else {
-      displayMenuItems(menuCategory);
-    }
-    console.log(menuCategory);
   });
-});
+};
+
+// filter items
+
 
 const displayMenuItems = (menuItems) => {
   let displayMenu = menuItems.map((item) => {
